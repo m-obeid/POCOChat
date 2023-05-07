@@ -10,6 +10,7 @@ const utils = require('./utils');
 const md5f = require('md5-file');
 const nodemailer = require('nodemailer')
 const jwt = require("jsonwebtoken")
+require("dotenv").config()
 
 const extraBadWords = ["niqqa", "lilnigga", "negas", "nega", "niqqas", "kurwo", "debil", "gówniarz", "pizda"]
 const bannedIps = []
