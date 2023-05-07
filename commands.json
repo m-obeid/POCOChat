@@ -1,0 +1,12 @@
+[
+    {
+        "name": "clear",
+        "arguments": [],
+        "comment": "Clears the chat for everyone"
+    },
+    {
+        "name": "hehehehehe",
+        "arguments": [],
+        "comment": "Send Peter Griffin hehehehe"
+    }
+]

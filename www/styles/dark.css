@@ -1,0 +1,145 @@
+body {
+    background-color: hsl(var(--theme-accent-color-h), 100%, 2%);
+    color: white;
+}
+
+.chatroom-text {
+    color: white;
+}
+
+#message {
+    background-color: hsl(var(--theme-accent-color-h), 100%, 2%);
+    border-color: hsl(var(--theme-accent-color-h), 0%, 50%);
+    color: white;
+}
+
+.form-control.input {
+    background-color: rgb(10,10,10);
+    border-color: gray;
+    color:white;
+}
+
+textarea.form-control {
+    background-color: rgb(10,10,10);
+    border-color: gray;
+    color:white;
+}
+
+textarea.form-control:focus {
+    background-color: rgb(10,10,10);
+    border-color: gray;
+    color:white;
+}
+
+.offcanvas {
+    background-color: rgba(0, 0, 0, 60%);
+    backdrop-filter: blur(8px);
+}
+
+.offcanvas .btn-close {
+    filter: invert();
+}
+
+.btn.btn-light  {
+    background-color: hsl(var(--theme-accent-color-h), 100%, 2%);
+    border-color: hsl(var(--theme-accent-color-h), 0%, 50%);
+    color: white;
+}
+
+.btn.btn-light:hover  {
+    background-color: hsl(var(--theme-accent-color-h), 11%, 30%);
+    border-color: hsl(var(--theme-accent-color-h), 0%, 50%);
+}
+
+.btn.btn-dark {
+    background-color: hsl(var(--theme-accent-color-h), var(--theme-dark-color-sl));
+    border-color: hsl(var(--theme-accent-color-h), 0%, 50%);
+}
+
+.btn.btn-dark:hover {
+    background-color: hsl(var(--theme-accent-color-h), 11%, 30%);
+    border-color: hsl(var(--theme-accent-color-h), 0%, 50%);
+}
+
+.btn.btn-secondary {
+    background-color: hsl(var(--theme-accent-color-h), 11%, 30%);
+    border-color: hsl(var(--theme-accent-color-h), 0%, 50%);
+}
+
+.btn.btn-secondary:hover {
+    background-color: hsl(var(--theme-accent-color-h), 11%, 60%);
+    border-color: hsl(var(--theme-accent-color-h), 0%, 50%);
+}
+
+.static-textarea {
+    color: white;
+}
+
+.btn.btn-light:hover {
+    background-color: rgb(50,50,50);
+    border-color: gray;
+    color: white;
+}
+
+.modal {
+    background-color: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.modal-content {
+    background-color: rgba(10, 10, 10);
+}
+
+.modal-content *:not(.spinner-border) {
+    border-color: #222222;
+}
+
+.settings-nav {
+    background-color: rgb(0,0,0);
+}
+
+.modal-content .btn-close {
+    filter: invert();
+}
+
+.toast {
+    background-color: rgba(49, 49, 49, 0.5);
+    border-width: 1px;
+    border-color: gray;
+}
+
+.toast-header {
+    background-color: rgba(54, 54, 54, 0.75);
+    color: white !important;
+    border-width: 1px;
+    border-color: gray;
+}
+
+.toast-header .btn-close {
+    filter: invert();
+}
+
+.logo-svg {
+    filter: none;
+}
+
+.navbar-blurback {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background-color: hsla(var(--theme-accent-color-h), 100%, 4%, 0.8);
+    box-shadow: 0px 0px 50px hsla(var(--theme-accent-color-h), 100%, 6%, 0.8);
+}
+
+.system-message {
+    background-color: rgb(72, 67, 60);
+    color: rgb(255, 239, 217);
+    border-color: rgb(82, 82, 82);
+    box-shadow: 0px 0px 5px gray;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+:root {
+    color-scheme: dark;
+}

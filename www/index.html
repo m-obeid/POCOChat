@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>POCOChat</title>
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="white">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)"  content="black">
+    <link rel="manifest" href="/manifest.json">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="" class="theme-css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="modal fade" id="loginModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title"><i class="bi bi-box-arrow-in-right"></i> Welcome!</h1>
+              <button type="button" class="btn-close d-none" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Enter your login data. Creating an account is done automatically if not found.</p>
+                <label for="inputUsername" class="form-label">Username</label>
+                <input type="name" id="inputUsername" class="form-control input">
+                <br>
+                <label for="inputPassword" class="form-label">Password</label>
+                <input type="password" id="inputPassword" class="form-control input">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="rememberMe">
+                    <label class="form-check-label" for="rememberMe">
+                      Remember me
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="/resetpassword" class="text-white" style="text-decoration: none; float: left;">I forgot my password</a>
+              <button type="button" class="btn btn-primary" onclick="joinBtn()">Join</button>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="modal fade" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="d-flex align-items-center">
+                    <strong class="loadmsg">Connecting to POCOChat Server ...</strong>
+                    <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade ip-api-error" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div style="font-size: 4em;"><i class="bi bi-sign-stop"></i></div>
+                    <h2 class="title">Failed to connect</h2>
+                    <p class="fs-4 msg">Something went wrong</p>
+                    <a type="button" class="btn btn-light" href=".">Try again</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="emailVerification" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title"><i class="bi bi-envelope-exclamation"></i> Verify Account</h1>
+                    <button type="button" class="btn-close d-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        To prevent spam, we need your E-Mail address to use your new account. We will send you a link.
+                    </p>
+                    <input type="email" id="inputEmail" class="form-control input" placeholder="john@mail.com">
+                    <br>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="joinBtn()" id="joinBtn">Join</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hidden"></div>
+    <div class="fixed-top navbar-blurback upper-navbar">
+        <div class="btn-group window-controls float-end d-none" role="group" aria-label="Window controls">
+            <!-- mokerosoft stopid -->
+            <button type="button" class="btn btn-light" onclick="window.electron.minimize()">_</button>
+            <button type="button" class="btn btn-secondary" onclick="window.electron.toggleMaxMin()"><i class="bi bi-window"></i></button>
+            <button type="button" class="btn btn-danger" onclick="window.electron.close()"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <br>
+        <div class="container">
+            <div class="row">
+                <div class="col"><div class="logo d-inline-block"><img src="logo.svg" height="50" class="logo-svg"></div></div>
+                <div class="col-auto text-end d-flex align-items-center"><div class="chatstats-monitor"><br></div></div>
+            </div>
+        </div>
+        <br>
+    </div>
+    <div class="upper-navbar-spacer">
+
+    </div>
+    <p class="container chatroom-text"></p>
+    <div class="fixed-bottom navbar-blurback bottom-navbar">
+        <br>
+        <div class="messaging-area container">
+            <div class="collapse" id="mentionList">
+                <div class="list-group mention-users-list">
+                    
+                </div>
+            </div>
+            <div class="collapse" id="commandsList">
+                <div class="list-group commands-list">
+                    
+                </div>
+            </div>
+            <div class="collapse show" id="fullToolsCollapse">
+                <div class="row gx-2">
+                    <div class="col">
+                        <div class="row gx-2">
+                            <div class="col">
+                                <textarea style="resize: none; height: 50px;" type="text" class="form-control" name="message" id="message" placeholder="Type a message ..."></textarea>
+                            </div>
+                            <div class="col-auto">
+                                <a id="send-btn" class="btn btn-dark" onclick="sendMessage()"><i class="bi bi-send"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-light" onclick="showEmojis()"><img src="emojis/doge.png" style="height:36px;width:36px;"></button>
+                        <!--<a href="emojilist" target="_blank" class="btn btn-light"><img src="emojis/doge.png" style="height:36px;width:36px;"></a>-->
+                    </div>
+                    <div class="col-auto">
+                        <button id="send-btn" class="btn btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#fullToolsCollapse" aria-expanded="false" aria-controls="fullToolsCollapse">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="collapse tools" id="fullToolsCollapse">
+                <div class="row gx-2">
+                    <div class="col text-disabled fs-4 fw-light">
+                        tools
+                    </div>
+                    <div class="col-auto">
+                        <button id="send-btn" class="btn btn-light" onclick="logoff()" target="_blank"><i class="bi bi-escape"></i></button>
+                    </div>
+                    <div class="col-auto">
+                        <a id="send-btn" class="btn btn-light" href="https://anonfiles.com/" target="_blank"><i class="bi bi-upload"></i></a>
+                    </div>
+                    <div class="col-auto">
+                        <button id="send-btn" class="btn btn-light" onclick="showSettings()"><i class="bi bi-gear"></i></button>
+                    </div>
+                    <div class="col-auto">
+                        <button id="send-btn" class="btn btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#fullToolsCollapse" aria-expanded="false" aria-controls="fullToolsCollapse">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="collapse" id="typingIndicatorCollapse">
+                <div class="typing-indicator">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div> 
+                <div class="typing-indicator-label fw-bold text-secondary"></div>
+            </div>
+            
+        </div>
+        <br>
+    </div>
+    <div class="toast-container position-fixed top-0 start-0 p-3" style="z-index: 9999;">
+      <div id="emojiToast" class="toast" data-bs-autohide="false" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <!--<img src="..." class="rounded me-2" alt="...">-->
+          <strong class="me-auto">Emojis</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            <iframe class="emojiframe" allowtransparency="true" src="emojilist" frameborder="0" height="200" width="337" onload="emojiFrameChange(this)"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade video-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title"><i class="bi bi-film"></i> Video</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <video src="" class="video-modal-player" controls preload="metadata"></video>
+                <a href="" class="video-modal-directlink" target="_blank">Video not playing?</a>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="modal fade audio-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title"><i class="bi bi-volume-up"></i> Audio</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <audio src="" class="audio-modal-player" controls></video>
+                <a href="" class="audio-modal-directlink" target="_blank">Audio not playing?</a>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="modal fade settings-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title"><i class="bi bi-gear"></i> Settings</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body settings-modal-body">
+                <ul class="nav nav-pills mb-3 sticky-top settings-nav" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" id="pills-looks-tab" data-bs-toggle="pill" data-bs-target="#pills-looks" type="button" role="tab" aria-controls="pills-looks" aria-selected="true"><i class="bi bi-brush"></i></button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="bi bi-person-circle"></i></button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-sounds-tab" data-bs-toggle="pill" data-bs-target="#pills-sounds" type="button" role="tab" aria-controls="pills-sounds" aria-selected="false"><i class="bi bi-bell"></i></button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="pills-information-tab" data-bs-toggle="pill" data-bs-target="#pills-information" type="button" role="tab" aria-controls="pills-information" aria-selected="false"><i class="bi bi-info-circle"></i></button>
+                    </li>
+                </ul>
+                <div class="container-fluid">
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-looks" role="tabpanel" aria-labelledby="pills-looks-tab" tabindex="0">
+                            <b>LOOKS</b>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="theme-sw" onchange="changeTheme(this)">
+                                <label class="form-check-label" for="theme-sw">Dark mode</label>
+                            </div>
+                            <label for="accentColorPicker" class="form-label">Accent color <span class="badge rounded-pill text-bg-warning">BETA</span>                            </label>
+                            <input type="range" class="form-range accent-color-range" min="0" max="360" id="accentColorPicker" onchange="changeAccent(this)">
+                            <p>This changes the look of POCOChat to your liking, similar to dynamic coloring in Material3 design.</p>
+                        </div>
+                        <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">
+                            <b>PROFILE</b>
+                            <p>
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <img src="" class="profile-picture-preview" onerror="this.src='no-profile.jpg'">
+                                    </div>
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label for="pfp" class="form-label">Change profile picture</label>
+                                            <input class="form-control form-control-sm" id="pfp" type="file" onchange="submitProfilePicture(this)" accept="image/*">
+                                        </div>
+                                    </div>
+                                </div>
+                            </p>
+                            <p>
+                                I recommend your profile picture to be:<br>
+                                <ul>
+                                    <li>512x512 pixels or lower as long as its 1:1</li>
+                                    <li>PNG, JPEG or GIF file format</li>
+                                    <li>Max. 2MB in file size</li>
+                                </ul>
+                            </p>
+                            <p>
+                                <div class="form-floating">
+                                    <textarea class="form-control" placeholder="Type your bio here" id="settings-bio-input" style="height: 300px" maxlength="200" onchange="changeBio(this)"></textarea>
+                                    <label for="settings-bio-input fw-bold">BIO</label>
+                                </div>
+                            </p>
+                        </div>
+                        <div class="tab-pane fade" id="pills-sounds" role="tabpanel" aria-labelledby="pills-sounds-tab" tabindex="0">
+                            <b>NOTIFICATIONS</b>
+                            <div class="alert alert-warning" role="alert" class="hide-on-desktop">
+                                On Windows and macOS, you will be able to install our client to leave POCOChat running in the background to always get notified.<br>
+                                The client can't be downloaded yet.
+                            </div>
+                            <p>Get notifications when:</p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="notifyPriority" id="notifyPriorityMsgIncoming" onchange="if(this.checked)changeNotifyPriority(0)">
+                                <label class="form-check-label" for="notifyPriorityMsgIncoming">
+                                  Message recieved
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="notifyPriority" id="notifyPriorityMentioned" onchange="if(this.checked)changeNotifyPriority(1)">
+                                <label class="form-check-label" for="notifyPriorityMentioned">
+                                  Message recieved and I'm mentioned
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="notifyPriority" id="notifyPriorityNever" onchange="if(this.checked)changeNotifyPriority(2)">
+                                <label class="form-check-label" for="notifyPriorityNever">
+                                  Never
+                                </label>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="pills-information" role="tabpanel" aria-labelledby="pills-information-tab" tabindex="0">
+                            <b>ABOUT POCOCHAT</b>
+                            <p>
+                                POCOChat Beta (compiled at Nov 23 2022 20:00 GMT+02)<br>
+                                Made by POCOGuy<br><br>
+                                Debug Info:<br>
+                                <pre>UUID: <getUUID></getUUID></pre>
+                            </p>
+                            <b>CREDITS</b>
+                            <p style="max-height: 100px;">
+                                    DEVELOPERS:<br>
+                                    <br>
+                                    POCOGuy - main developer<br>
+                                    GigantTech - server provider<br>
+                                    <br>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="userDetailsOffcanvas" aria-labelledby="uDOLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="uDOLabel"></h5>
+          <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <div class="row">
+            <div class="col-auto">
+                <img src="" class="profile-picture-preview" alt="Profile picture">
+            </div>
+            <div class="col-7 text-wrap my-auto">
+                <div class="fs-2 fw-light username text-break"></div>
+                <div class="fs-4 fw-light state"></div>
+                <div class="fw-light sinceState" style="font-size: 10pt;--bs-text-opacity: .8"></div>
+            </div>
+          </div>
+          <div>
+            <br><br>
+            <b>BIO</b>
+            <br><br>
+            <div class="form-group">
+                <textarea class="static-textarea w-100" placeholder="User doesn't have a Bio :(" readonly id="bio-input"></textarea>
+            </div>
+            <br>
+            <br>
+            <b>DETAILS</b>
+            <div>
+                First joined POCOChat: <span class="creationDate"></span><br>
+            </div>
+            <div class="d-moderation">
+                <br><br>
+                <b>MODERATOR OPTIONS</b>
+                <p>Please think before you interact.</p>
+                <button type="button" class="btn btn-primary" id="send-notice-btn">Send notice</button>
+                <hr>
+                <button type="button" class="btn btn-primary" id="ip-ban-btn">IP Ban</button>
+                <button type="button" class="btn btn-secondary" id="ip-unban-btn">Remove Ban</button>
+            </div>
+          </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <script src="https://raw.githubusercontent.com/fengyuanchen/cropperjs/main/dist/cropper.min.js"></script>
+    <script src="https://raw.githubusercontent.com/fengyuanchen/cropperjs/main/dist/cropper.min.css"></script>
+    <script>
+        const chat = document.querySelector(".chatroom-text")
+        let username;
+        let uuid = null;
+        let message = document.getElementById("message");
+        let sendBtn = document.getElementById("send-btn");
+
+        const videoModal = document.querySelector(".video-modal");
+        const videoPlayer = document.querySelector(".video-modal-player");
+        const videoDirect = document.querySelector(".video-modal-directlink");
+
+        const audioModal = document.querySelector(".audio-modal");
+        const audioPlayer = document.querySelector(".audio-modal-player");
+        const audioDirect = document.querySelector(".audio-modal-directlink");
+
+        const settingsModal = document.querySelector(".settings-modal");
+
+        const mentionList = document.querySelector("#mentionList");
+        const mentionListBs = new bootstrap.Collapse(mentionList, {toggle:false});
+
+        const commandsList = document.querySelector("#commandsList");
+        const commandsListBs = new bootstrap.Collapse(commandsList, {toggle:false});
+
+        const typingIndicatorCollapse = document.querySelector("#typingIndicatorCollapse");
+        const typingIndicatorCollapseBs = new bootstrap.Collapse(typingIndicatorCollapse, {toggle:false});
+
+        let commands;
+
+        function logoff() {
+            if (localStorage.getItem("Chatroom-Auth-Token") != null) {
+                localStorage.removeItem("Chatroom-Auth-Token");
+            }
+
+            socket.disconnect();
+            window.location.reload();
+        }
+
+        function searchUsersMention(filter) {
+            var ul, li, a, i, txtValue;
+            filter = filter.toUpperCase();
+            ul = document.querySelector("#mentionList > div");
+            li = ul.querySelectorAll(".list-group-item");
+            for (i = 0; i < li.length; i++) {
+                a = li[i].querySelector("div > h5");
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+
+        let desktopClientNotificationHandler;
+
+        if (isElectron()) {
+            desktopClientNotificationHandler = (l) => {
+                window.electron.notificationHandler(l)
+            }
+        }
+            
+        function isElectron() { // just copied this off stackoverflow lmao
+            // Renderer process
+            if (typeof window !== 'undefined' && typeof window.process === 'object' && window.process.type === 'renderer') {
+                return true;
+            }
+
+            // Main process
+            if (typeof process !== 'undefined' && typeof process.versions === 'object' && !!process.versions.electron) {
+                return true;
+            }
+
+            // Detect the user agent when the `nodeIntegration` option is set to true
+            if (typeof navigator === 'object' && typeof navigator.userAgent === 'string' && navigator.userAgent.indexOf('Electron') >= 0) {
+                return true;
+            }
+
+            return false;
+        }
+
+        function changeBio(textarea) {
+            fetch("/bio", {
+                method: 'POST',
+                body: JSON.stringify({
+                    text: textarea.value,
+                    username: username,
+                    password: passwordInput.value
+                })
+            })
+        }
+
+        function submitProfilePicture(input) {
+            var data = new FormData()
+            data.append('file', input.files[0]);
+
+            fetch('/profile_pics', {
+              method: 'POST',
+              headers: {
+                'Data-Authentication-Username': username,
+                'Data-Authentication-Password': passwordInput.value
+              },
+              body: data,
+            }).then(res => {
+                return res.text()
+            }).then(text => {
+                if (text === "SUCCESS_PROFILE_UPDATED") {
+                    document.querySelector(".profile-picture-preview").src = "profile_pics/" + username + "?t=" + Date.now();
+                }
+                else if (text === "ERROR_IMAGE_EXCEEDS_MAX") {
+                    alert("Error: Image is bigger than 2MB, that's too big.")
+                }
+                else {
+                    alert("An error ourcurred when trying to change your profile picture:\n" + res.text);
+                }
+            });
+        }
+
+        function searchCommands(filter) {
+            var ul, li, a, i, txtValue;
+            filter = filter;
+            ul = document.querySelector("#commandsList > div");
+            li = ul.querySelectorAll(".list-group-item");
+            for (i = 0; i < li.length; i++) {
+                a = li[i].querySelector("div > h5");
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+
+        if (localStorage.getItem("Chatroom-Settings-Theme") === null) {
+            localStorage.setItem("Chatroom-Settings-Theme", window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark": "light");
+        }
+        if (localStorage.getItem("Chatroom-Settings-Notifications") === null) {
+            localStorage.setItem("Chatroom-Settings-Notifications", 0);
+        }
+
+        changeTheme({checked: localStorage.getItem("Chatroom-Settings-Theme") === "dark", frutiger: localStorage.getItem("Chatroom-Settings-Theme") === "nostalgia"});
+
+        if (localStorage.getItem("Chatroom-Settings-Accent-Color") != null)
+            document.querySelector(":root").style.setProperty("--theme-accent-color-h", localStorage.getItem("Chatroom-Settings-Accent-Color"));
+
+        document.querySelector("#theme-sw").checked = localStorage.getItem("Chatroom-Settings-Theme") === "dark";
+
+        function changeNotifyPriority(id) {
+            localStorage.setItem("Chatroom-Settings-Notifications", id);
+        }
+
+        function changeTheme(toggle) {
+            if (toggle.checked) {
+                document.querySelector(".theme-css").href = "styles/dark.css";
+                localStorage.setItem("Chatroom-Settings-Theme", "dark");
+            }
+            else {
+                if (toggle.frutiger) {
+                    document.querySelector(".theme-css").href = "styles/frutiger.css";
+                    localStorage.setItem("Chatroom-Settings-Theme", "nostalgia");
+                }
+                else {
+                    document.querySelector(".theme-css").href = "";
+                    localStorage.setItem("Chatroom-Settings-Theme", "light");
+                }
+            }
+        }
+
+        function changeAccent(range) {
+            document.querySelector(":root").style.setProperty("--theme-accent-color-h", range.value + "deg");
+            localStorage.setItem("Chatroom-Settings-Accent-Color", range.value + "deg");
+        }
+
+        let userIsTyping = false;
+
+        message.oninput = () => {
+            const msg = message.value;
+            const msgSplit = msg.split(" ");
+
+            if (msgSplit[msgSplit.length - 1].startsWith("@")) {
+                const listGroup = mentionList.querySelector(".list-group");
+                listGroup.innerHTML = "";
+                usersList.forEach(user => {
+                    listGroup.innerHTML += 
+                    `<button onclick="let msgSplit=message.value.split(' ');message.value=(msgSplit.slice(0, -1).join(' ')+\` @${user} \`).trimStart();mentionListBs.hide();message.focus()" class="list-group-item list-group-item-action">
+                          <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">${user}</h5>
+                          </div>
+                    </button>`;
+                });
+                mentionListBs.show();
+                searchUsersMention(msgSplit[msgSplit.length - 1].replace("@", ""));
+            }
+            else {
+                mentionListBs.hide();
+            }
+
+            if (msg.startsWith("!") && !msg.includes(" ")) {
+                const listGroup = commandsList.querySelector(".list-group");
+                listGroup.innerHTML = "";
+                commands.forEach(cmd => {
+                    let cmdArgsHtml = "";
+                    cmd.arguments.forEach(arg => {
+                        cmdArgsHtml += `<span class="badge rounded-pill text-bg-secondary">${arg}</span> `;
+                    });
+                    if (cmdArgsHtml === "") {
+                        cmdArgsHtml = "none";
+                    }
+                    listGroup.innerHTML += 
+                    `<button onclick="message.value=(\`!${cmd.name}\`);commandsListBs.hide();message.focus()" class="list-group-item list-group-item-action">
+                          <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">!${cmd.name}</h5>
+                          </div>
+                          <p class="mb-1">${cmd.comment}</p>
+                          <small>Parameters: ${cmdArgsHtml}</small>
+                    </button>`;
+                });
+                commandsListBs.show();
+                searchCommands(msg);
+            }
+            else {
+                commandsListBs.hide();
+            }
+
+            if (message.value.trim().length != 0) {
+                if (!userIsTyping) {
+                    userIsTyping = true;
+                    socket.emit("user-typing", {
+                        typing: true,
+                        uuid: uuid
+                    })
+                }
+            }
+            else {
+                userIsTyping = false;
+                socket.emit("user-typing", {
+                    typing: false,
+                    uuid: uuid
+                })
+            }
+        }
+
+        message.addEventListener("keypress", function(event) {
+            let touch = (('ontouchstart' in window) ||
+                        (navigator.maxTouchPoints > 0) ||
+                        (navigator.msMaxTouchPoints > 0));
+            if (event.key === "Enter" && !event.shiftKey && !touch) { // disable enter key sends message on touchscreens
+              event.preventDefault();
+              sendBtn.click();
+              mentionListBs.hide();
+              commandsListBs.hide();
+            }
+        });
+
+        function showVideo(url) {
+            const videoModalBs = new bootstrap.Modal(videoModal);
+            videoModalBs.show();
+            videoPlayer.src = url;
+            videoDirect.href = url;
+        }
+
+        function timeSince(date) {       
+            var seconds = Math.floor((new Date() - date) / 1000);
+
+            var interval = seconds / 31536000;
+
+            if (interval > 1) {
+              return Math.floor(interval) + " years";
+            }
+            interval = seconds / 2592000;
+            if (interval > 1) {
+              return Math.floor(interval) + " months";
+            }
+            interval = seconds / 86400;
+            if (interval > 1) {
+              return Math.floor(interval) + " days";
+            }
+            interval = seconds / 3600;
+            if (interval > 1) {
+              return Math.floor(interval) + " hours";
+            }
+            interval = seconds / 60;
+            if (interval > 1) {
+              return Math.floor(interval) + " minutes";
+            }
+            return Math.floor(seconds) + " seconds";
+        }
+
+        function deleteMsg(mid) {
+            // WARNING: THIS IS A MODERATOR ONLY COMMAND
+            
+            socket.emit('mod-delete-msg', { id: mid }) // requests from non moderators will not be handled
+        }
+
+        function ipBan(username, b) {
+            // WARNING: THIS IS A MODERATOR ONLY COMMAND
+            let bt;
+            if (b) {
+                try {
+                    bt = parseInt(prompt("Enter ban time in minutes (no decimal places, integer only), default is 30"));
+                }
+                catch {
+                    bt = 30;
+                }
+            }
+            else {
+                bt = 0;
+            }
+
+            let reason = prompt("Why are you banning? Explain to him/her why you are doing it");
+
+            if (reason == null)
+                return;
+
+            socket.emit('mod-ban', { id: username, banTime: bt, toggle: b, reason: reason }) // requests from non moderators will not be handled 
+        }
+
+        function sendNotice(username) {
+            // WARNING: THIS IS A MODERATOR ONLY COMMAND
+            let msg = prompt("Enter your notice here. You can use this feature to warn somebody without telling in public chat.")
+
+            socket.emit('mod-send-notice', { id: username, msg: msg }) // requests from non moderators will not be handled  
+        }
+
+        function showProfile(user) {
+            const offcanvas = document.querySelector("#userDetailsOffcanvas");
+            const offcanvasBs = new bootstrap.Offcanvas(offcanvas);
+
+            offcanvas.querySelector(".profile-picture-preview").src = "profile_pics/" + user;
+            offcanvas.querySelector(".username").innerHTML = user;
+            if (usersList.includes(user)) {
+                offcanvas.querySelector(".state").innerHTML = "Online";
+            }
+            else {
+                offcanvas.querySelector(".state").innerHTML = "Offline";
+            }
+            fetch('bio/' + user)
+                .then(res => {return res.text()})
+                .then(bio => {
+                    offcanvas.querySelector("#bio-input").value = bio;
+                    offcanvas.querySelector("#bio-input").style.height = (offcanvas.querySelector("#bio-input").scrollHeight+3) + "px";
+                    offcanvasBs.show();
+                });
+            fetch('user/' + user, {
+                method: 'POST'
+            })
+                .then(res => {return res.text()})
+                .then(info => {
+                    const infoJ = JSON.parse(info);
+                    console.log(infoJ);
+                    offcanvas.querySelector(".creationDate").innerText = Intl.DateTimeFormat(undefined, {dateStyle: 'short', timeStyle: 'short'}).format(infoJ.creationDate);
+                    if (usersList.includes(user))
+                        offcanvas.querySelector(".sinceState").innerText = "since " + timeSince(new Date(infoJ.lastJoinedDate));
+                    else
+                        offcanvas.querySelector(".sinceState").innerText = "was online " + timeSince(new Date(infoJ.lastLeftDate)) + " ago";
+
+                    if (isModerator) {
+                        offcanvas.querySelector("#ip-ban-btn").setAttribute("onclick", `ipBan(\`${user}\`, true)`)
+                        offcanvas.querySelector("#send-notice-btn").setAttribute("onclick", `sendNotice(\`${user}\`)`)
+                        offcanvas.querySelector("#ip-unban-btn").setAttribute("onclick", `ipBan(\`${user}\`, false)`)
+                    }
+                });
+        }
+
+        function showSettings() {
+            document.querySelector("#notifyPriorityMsgIncoming").checked = (localStorage.getItem("Chatroom-Settings-Notifications") == 0);
+            document.querySelector("#notifyPriorityMentioned").checked = (localStorage.getItem("Chatroom-Settings-Notifications") == 1);
+            document.querySelector("#notifyPriorityNever").checked = (localStorage.getItem("Chatroom-Settings-Notifications") == 2);
+            document.querySelector(".accent-color-range").value = parseInt(getComputedStyle(document.querySelector(":root")).getPropertyValue('--theme-accent-color-h').replace("deg", ""));
+            document.querySelector(":root").style.setProperty("--theme-accent-color-h", localStorage.getItem("Chatroom-Settings-Accent-Color"));
+            const settingsModalBs = new bootstrap.Modal(settingsModal);
+            settingsModal.querySelector(".profile-picture-preview").src = "profile_pics/" + username;
+            fetch('bio/' + username).then(res => {return res.text()})
+            .then(bio => {
+                settingsModal.querySelector("#settings-bio-input").value = bio;
+            });
+            settingsModalBs.show();
+            settingsModal.querySelectorAll("getUUID").forEach(e => {
+                e.innerHTML = uuid;
+            })
+        }
+
+        function showAudio(url) {
+            const audioModalBs = new bootstrap.Modal(audioModal);
+            audioModalBs.show();
+            if (audioDirect.src != url) {
+                audioPlayer.src = url;
+            }
+            audioDirect.href = url;
+        }
+
+        function emojiFrameChange(iframe) {
+            if (iframe.contentWindow.location.href.includes("/emojis/")) {
+                const emoji = ":" + iframe.contentWindow.location.href.split("/")[4].split(".")[0] + ":"
+                iframe.contentWindow.location.href = "emojilist";
+                const emojiToast = document.getElementById('emojiToast')
+                const toast = new bootstrap.Toast(emojiToast)
+                toast.hide()
+                message.value += emoji;
+            }
+        }
+
+        /* window.onbeforeunload = function () {
+            fetch('leave', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'text/plain'
+                },
+                body: uuid
+            })
+        } old, now when socket disconnects :) */
+
+        function showEmojis() {
+            const emojiFrame = document.querySelector(".emojiframe");
+            emojiFrame.src = "emojilist";
+            const emojiToast = document.getElementById('emojiToast')
+            const toast = new bootstrap.Toast(emojiToast)
+            toast.show()
+        }
+    </script>
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js" integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script>
+    <script defer>
+        function updateTypingIndicator() {
+            if (peopleTyping.length == 0) {
+                typingIndicatorCollapseBs.hide();
+            }
+            else {
+                let typingString = "";
+                if (peopleTyping.length == 1) {
+                    typingString += peopleTyping[0] + " is typing ...";
+                }
+                else if (peopleTyping.length == 2) {
+                    typingString += peopleTyping[0] + " and " + peopleTyping[1] + " are typing ...";
+                }
+                else if (peopleTyping.length == 3) {
+                    typingString += peopleTyping[0] + ", " + peopleTyping[1] + " and " + peopleTyping[2] + " are typing ...";
+                }
+                else if (peopleTyping.length > 3) {
+                    typingString += "Several people are typing ...";
+                }
+                typingIndicatorCollapse.querySelector(".typing-indicator-label").innerText = typingString;
+                typingIndicatorCollapseBs.show();
+            }
+        }
+
+        window.onresize = fixChatSize;
+        
+        function fixChatSize() {
+            const up = document.querySelector(".upper-navbar");
+            const down = document.querySelector(".bottom-navbar");
+
+            chat.style.paddingTop = up.offsetHeight + "px";
+            chat.style.paddingBottom = down.offsetHeight + "px";
+        }
+
+        fixChatSize();
+
+        var notify = new Audio('sumung.mp3');
+        var sendSound = new Audio('send.mp3');
+        var allowNotify = true;
+        var responseCode = 200;
+
+        function last(array) {
+            return array[array.length - 1];
+        }
+
+        let usersList;
+        let lastMsgsJSON;
+
+        /*
+        function updateChat() {
+            fetch("chat", {
+                cache: "no-cache",
+                method: 'POST',
+                body: JSON.stringify({
+                    uuid: uuid
+                })
+            }).then(function(response) {
+              responseCode = response.status
+              return response.text()
+            }).then(function(data) {
+              console.log(data);
+              let msgsJSON = {};
+              try {
+                msgsJSON = JSON.parse(data);
+              } catch {
+                console.log("trying again ...");
+                setTimeout(updateChat, 100); // try again
+                return;
+              }
+              if (!_.isEqual(lastMsgsJSON, msgsJSON)) {
+                lastMsgsJSON = msgsJSON;
+                const msgsHTML = json2HTML(msgsJSON);
+                chat.innerHTML = msgsHTML;
+                chat.scrollTop = chat.scrollHeight;
+                if (localStorage.getItem("Chatroom-Settings-Notifications") == 0 ||
+                    (localStorage.getItem("Chatroom-Settings-Notifications") == 1 
+                    && msgsJSON[msgsJSON.length - 1].html.includes("@" + username))
+                    ) {
+                    if (allowNotify) try {notify.play();}catch{}
+                    console.log("Notification!")
+                    if (desktopClientNotificationHandler != undefined) 
+                        desktopClientNotificationHandler(msgsJSON[msgsJSON.length - 1]);
+                }
+              }
+            }).catch(function(error) {
+              chat.innerHTML += "\n<div style='color:red'>" + error + "</div>"
+              console.error(error);
+            })
+            fetch("chatstats").then(res => {
+                return res.json()
+            }).then(data => {
+                document.querySelector(".chatstats-monitor").innerText = data.people.count + (data.people.count === 1 ? " person" : " people") + " online";
+                usersList = data.people.users;
+                commands = data.commands;
+            });
+        }
+        */ // old code
+        function updateChat() {
+            fetch("chat", {
+                cache: "no-cache",
+                method: 'POST',
+                body: JSON.stringify({
+                    uuid: uuid
+                })
+            }).then(function(response) {
+              responseCode = response.status
+              return response.text()
+            }).then(function(data) {
+              console.log(data);
+              let msgsJSON = {};
+              try {
+                msgsJSON = JSON.parse(data);
+              } catch {
+                console.log("trying again ...");
+                setTimeout(updateChat, 100); // try again
+                return;
+              }
+              if (!_.isEqual(lastMsgsJSON, msgsJSON)) {
+                lastMsgsJSON = msgsJSON;
+                fastJSON2HTML(chat, msgsJSON);
+                chat.scrollTop = chat.scrollHeight;
+                let msgTxt = "";
+                if (msgsJSON.length != 0) msgTxt = msgsJSON[msgsJSON.length - 1].html != undefined ? msgsJSON[msgsJSON.length - 1].html : msgsJSON[msgsJSON.length - 1].caption;
+                if (localStorage.getItem("Chatroom-Settings-Notifications") == 0 ||
+                    (localStorage.getItem("Chatroom-Settings-Notifications") == 1 
+                    && msgTxt.includes("@" + username))
+                    ) {
+                    if (allowNotify) try {notify.play();}catch{}
+                    console.log("Notification!")
+                    if (desktopClientNotificationHandler != undefined) 
+                        desktopClientNotificationHandler(msgsJSON[msgsJSON.length - 1]);
+                }
+              }
+            }).catch(function(error) {
+              chat.innerHTML += "\n<div style='color:red'>" + error + "</div>"
+              console.error(error);
+            })
+            fetch("chatstats").then(res => {
+                return res.json()
+            }).then(data => {
+                document.querySelector(".chatstats-monitor").innerText = data.people.count + (data.people.count === 1 ? " person" : " people") + " online";
+                usersList = data.people.users;
+                commands = data.commands;
+            });
+        } // new code by @JamSharp
+
+        var doneIDs = [];
+
+        function fastJSON2HTML(chat, json)
+        {
+            var msgIDs = [];
+            for(var i = 0; i < json.length; i++)
+            {
+                if(!doneIDs.includes(json[i]["_id"]))
+                {
+                    fastInnerHTML(chat, json2HTML([json[i]]), json[i]["_id"]);
+                }
+                msgIDs.push(json[i]["_id"]);
+            }
+        
+            for(var i = 0; i < doneIDs.length; i++)
+            {
+                if(!msgIDs.includes(doneIDs[i]))
+                {
+                    console.log("Message Deleted: " + doneIDs[i]);
+                    try{
+                    document.getElementById(`chat_${doneIDs[i]}`).remove();
+                    }catch(e){};
+                }
+            }
+            doneIDs = msgIDs;
+        }
+
+        function fastInnerHTML(elem, innerHTML,id)
+        {
+            var div = document.createElement("div");
+            div.id = `chat_${id}`;
+            div.innerHTML = innerHTML;
+            elem.appendChild(div);
+        }
+
+        let publicIP;
+
+        let connectionState = "connectingSocketIo";
+
+        const connectionStates = {
+            getip: "Doing security checks ...",
+            connectingSocketIo: "Pinging POCOChat servers ...",
+            postConnectingSocketIo: "Connecting to POCOChat servers ..."
+        }
+
+        const loadingModal = document.querySelector("#loadingModal")
+        const loadingModalBs = new bootstrap.Modal(loadingModal)
+
+        loadingModal.querySelector(".loadmsg").innerText = connectionStates[connectionState]
+        loadingModalBs.show()
+
+        const loginModal = document.querySelector("#loginModal");
+        const loginModalBs = new bootstrap.Modal(loginModal);
+        loginModalBs.hide();
+
+        const socket = io();
+
+        let peopleTyping = [];
+
+        socket.on('chat-update', () => {
+            updateChat();
+        })
+
+        socket.on('notice', (msg) => {
+            alert(msg)
+        })
+
+        async function keepAwake() {
+            socket.emit('pong');
+        }
+        
+
+        socket.on('try-join', () => {
+            joinBtn();
+        })
+
+        socket.on('initial-data', (d) => {
+            peopleTyping = d.peopleTyping;
+            updateTypingIndicator();
+        })
+
+        socket.on('user-typing', (data) => {
+            if (data.typing) {
+                peopleTyping.push(data.username);
+            }
+            else {
+                peopleTyping = peopleTyping.filter(e => e !== data.username);
+            }
+
+            updateTypingIndicator();
+        })
+
+        let ipApiIv;
+        let isToken = false;
+
+        socket.on('connect', () => {
+            console.log("your socket id should be ", socket.id)
+            if (connectionState === "connectingSocketIo") {
+                connectionState = "getip";
+                loadingModal.querySelector(".loadmsg").innerText = connectionStates[connectionState]
+                fetch("https://api.ipify.org?format=json")
+                    .then((d) => {
+                        return d.json();
+                    })
+                    .then((djs) => {
+                        ipApiIv = setInterval(function ipApiTO() {
+                            console.log("IP API Test PASSED!")
+                            publicIP = djs.ip;
+                            connectionState = "postConnectingSocketIo";
+                            loadingModal.querySelector(".loadmsg").innerText = connectionStates[connectionState]
+
+                            if (socket.connected) {
+                                clearInterval(ipApiIv);
+                                setTimeout(() => {
+                                    loadingModalBs.hide();
+                                }, 500)
+                                updateChat();
+                                if (firstConnection) {
+                                    if (localStorage.getItem("Chatroom-Auth-Token") != null)
+                                    {
+                                        username = localStorage.getItem("Chatroom-Auth-Username");
+                                        passwordInput.value = localStorage.getItem("Chatroom-Auth-Token");
+                                        isToken = true;
+                                        userLogin = false;
+                                        join({ip: publicIP}, socket.id);
+                                    }
+                                    else {
+                                        loginModalBs.show();
+                                        userLogin = true;
+                                    }
+                                }
+                            }
+                        }, 0);
+                    })
+                    .catch(() => {
+                        const err = document.querySelector(".ip-api-error");
+                        new bootstrap.Modal(err).show();
+                        err.querySelector(".msg").innerText = "IP Security Check failed.\nTip: If you use uBlock Origin, please disable it"
+                        setTimeout(() => {
+                                    loadingModalBs.hide();
+                                    loginModalBs.hide();
+                                }, 500)
+                        console.error("IP API Test FAILED!")
+                        clearInterval(ipApiIv);
+                    })
+            }
+        })
+
+        let connectionAttempts = 0;
+        let firstConnection = true;
+
+        socket.on('disconnect', (r) => {
+            connectionAttempts += 1;
+            if (connectionAttempts <= 5) {
+                setTimeout(() => {
+                    socket.connect();
+                }, 2000);
+                setTimeout(() => {
+                    if (socket.connected) {
+                        firstConnection = false;
+                    }
+                }, 5000);
+            }
+            else {
+                const err = document.querySelector(".ip-api-error");
+                new bootstrap.Modal(err).show();
+                err.querySelector(".msg").innerText = "Could not connect to chat server\nError code: " + r;
+                clearInterval(ipApiIv);
+
+                setTimeout(() => {
+                                    loadingModalBs.hide();
+                                    loginModalBs.hide();
+                                }, 500)
+                console.error("Socket.io couldn't connect");
+            }
+        })
+
+        const passwordInput = loginModal.querySelector("#inputPassword");
+
+        function joinBtn() {
+            const loginModal = document.querySelector("#loginModal");
+            const emailModal = document.querySelector("#emailVerification");
+            const usernameInput = loginModal.querySelector("#inputUsername");
+            username = usernameInput.value;
+            if (username.replaceAll(" ", "") != "")
+            {
+                loginModal.querySelector(".btn-close").click();
+                emailModal.querySelector(".btn-close").click();
+                join({ip: publicIP}, socket.id);
+            }
+        }
+
+        function sendMessage() {
+            userIsTyping = false;
+            socket.emit('user-typing', {
+                typing: false,
+                uuid: uuid
+            });
+            const msg = message.value;
+            if (msg.toLowerCase().includes("frutiger aero")) {
+                changeTheme({toggle: false, frutiger: true})
+            }
+            if (/<\/?[a-z][\s\S]*>/i.test(msg) || msg.toLowerCase().includes("<svg")) {
+                alert("You can't send this message.\nReason: HTML is forbidden");
+                return;
+            }
+            if (msg.length >= 2000) {
+                alert("You can't send this message.\nReason: Message length exceeds 2000 characters.")
+            }
+            if (msg.trim() != "") {
+                allowNotify = false;
+                setTimeout(() => {
+                    allowNotify = true;
+                }, 2000);
+                socket.emit('message-sent', {
+                    uuid: uuid,
+                    html: msg,
+                    date: Date.now() 
+                });
+                sendSound.play();
+                updateChat()
+            }
+            message.value = "";
+        }
+
+        let userLogin = false;
+
+        function join(ipdata, sockid) {
+            let obj = {
+                username: username.replaceAll(" ", "").replaceAll("⠀", ""),
+                password: passwordInput.value,
+                socketId: sockid,
+                ipdata: ipdata,
+                useragent: window.navigator.userAgent,
+                email: document.querySelector("#inputEmail").value === "" ? undefined : document.querySelector("#inputEmail").value
+            }
+            if (isToken) {
+                obj.password = "";
+                obj.authToken = passwordInput.value;
+            }
+            fetch("join", {
+                method: "POST",
+                cache: "no-cache",
+                headers: {
+                    "Content-type": "text/plain"
+                },
+                body: JSON.stringify(
+                    obj
+                )
+            }).then((res) => {
+                return res.text()
+            }).then((txt) => {
+                if (isToken) {
+                    isToken = false;
+                    passwordInput.value = "";
+                }
+                if (txt === "ERROR_SOCKET_ID_FAIL") {
+                    window.location.reload()
+                    return;
+                }
+                if (txt === "ERROR_USERNAME_ALREADY_USED") {
+                    alert("The username is already used, please try something else!") 
+                    const loginModal = document.querySelector("#loginModal");
+                    const loginModalBs = new bootstrap.Modal(loginModal);
+                    loginModalBs.show();
+                    return;
+                }
+                if (txt === "ERROR_PASSWORD_NOT_PROVIDED") {
+                    alert("Enter a password!")
+                    const loginModal = document.querySelector("#loginModal");
+                    const loginModalBs = new bootstrap.Modal(loginModal);
+                    loginModalBs.show();
+                    return;
+                }
+                else if (txt === "ERROR_NAME_TOO_LONG") {
+                    alert("The username is too long, please try something else!")
+                    const loginModal = document.querySelector("#loginModal");
+                    const loginModalBs = new bootstrap.Modal(loginModal);
+                    loginModalBs.show();
+                    return;
+                }
+                else if (txt === "ERROR_NAME_IS_ILLEGAL") {
+                    alert("You can't use this username ...")
+                    const loginModal = document.querySelector("#loginModal");
+                    const loginModalBs = new bootstrap.Modal(loginModal);
+                    loginModalBs.show();
+                    return;
+                }
+                else if (txt === "ERROR_AUTHENTICATION_FAILURE") {
+                    alert("Your username or password is wrong.")
+                    const loginModal = document.querySelector("#loginModal");
+                    const loginModalBs = new bootstrap.Modal(loginModal);
+                    loginModalBs.show();
+                    return;
+                }
+                else if (txt === "ERROR_IP_ADDRESS_NOT_PROVIDED") {
+                    alert("Couldn't log in successfully, if you have an adblocker/content blocker, try disabling it");
+                    window.location.href = "about:blank";
+                    return;
+                }
+                else if (txt === "ERROR_EMAIL_VERIFICATION_REQUIRED") {
+                    const emailModal = document.querySelector("#emailVerification");
+                    const emailModalBs = new bootstrap.Modal(emailModal);
+                    emailModalBs.show();
+                    return;
+                }
+                else if (txt === "ERROR_EMAIL_VERIFICATION_SENT") {
+                    const emailModal = document.querySelector("#emailVerification");
+                    const emailModalBs = new bootstrap.Modal(emailModal);
+                    emailModal.querySelector("#inputEmail").classList.add("d-none");
+                    emailModal.querySelector(".modal-footer").classList.add("d-none");
+                    emailModal.querySelector("p").innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <strong>Waiting for verification, check your emails ...</strong>
+                        <div class="spinner-border ms-auto text-primary" role="status" aria-hidden="true"></div>
+                    </div>
+                    `;
+                    emailModalBs.show();
+                    return;
+                }
+                else if (txt === "ERROR_OLD_SOCKET_KICK") {
+                    loginBtn();
+                }
+                else {
+                    const data = JSON.parse(txt);
+                    uuid = data.uuid;
+                    localStorage.setItem("Chatroom-Auth-Username", username);
+                    if (document.querySelector("#rememberMe").checked)
+                        localStorage.setItem("Chatroom-Auth-Token", data.authToken); // DO NOT SHARE THIS TOKEN WITH ANYONE
+                    else {
+                        if (localStorage.getItem("Chatroom-Auth-Token") != null && userLogin)
+                            localStorage.removeItem("Chatroom-Auth-Token");
+                    }
+                    isModerator = data.roles != undefined && data.roles.includes("moderation");
+                    console.log("UUID:", uuid)
+                    if (isModerator) {
+                        document.querySelector(":root").style.setProperty("--d-moderation-state", "block")
+                    }
+                }
+            })   
+        }
+
+        let isModerator = false;
+
+        let msgPartForMod = `
+        <div class="d-moderation">
+            <button type="button" class="btn btn-primary btn-sm" onclick="deleteMsg('{MESSAGE_ID_PLACEHOLDER}')">
+                <i class="bi bi-trash3"></i>
+            </button>
+        </div>`
+
+        function json2HTML(json) {
+            let html = "";
+            json.forEach(object => {
+                const mySelfParam = object.userid === uuid ? " myself": "";
+                if (object.badges === undefined || object.badges === null)
+                    object.badges = ""
+                switch (object.type) {
+                    case "system-message":
+                        html += `<div class="message-container"><div class="system-message"><small>${object.html}</small></div></div><br>`;
+                        break;
+                    case "text":
+                        html += `<div class="message-container row gx-2">`
+                        if (object.userid === uuid) {
+                            html += `<div class="col"></div><div class="col">`
+                        }
+                        else {
+                            html += `<div class="col-auto"><img src="profile_pics/${object.username}?t=${object.time}" class="profile-picture" onerror="this.src='no-profile.jpg'"></div><div class="col-10">`
+                        }
+                        html += `<div class='message${mySelfParam}'><small class="msg-head"><div class="show-username-link" onclick="showProfile(\`${object.username}\`)">${object.username} ${object.badges}</div> @ ${Intl.DateTimeFormat(undefined, {dateStyle: 'short', timeStyle: 'short'}).format(object.time)}<br></small>
+                        ${msgPartForMod.replaceAll("{MESSAGE_ID_PLACEHOLDER}", object.username + "@" + object.time + ":" + object._id)}${object.html}${object.userid === uuid ? `</div></div></div>` : `</div></div><div class="col"></div></div>`}`;
+                        break;
+                    case "image": 
+                        html += `<div class="message-container row gx-2">`
+                        if (object.userid === uuid) {
+                            html += `<div class="col"></div><div class="col">`
+                        }
+                        else {
+                            html += `<div class="col-auto"><img src="profile_pics/${object.username}?t=${object.time}" class="profile-picture" onerror="this.src='no-profile.jpg'"></div><div class="col-8">`
+                        }
+                        html += `<div class='message${mySelfParam}'><small class="msg-head"><div class="show-username-link" onclick="showProfile(\`${object.username}\`)">${object.username} ${object.badges}</div> @ ${Intl.DateTimeFormat(undefined, {dateStyle: 'short', timeStyle: 'short'}).format(object.time)}<br></small>
+                            ${msgPartForMod.replaceAll("{MESSAGE_ID_PLACEHOLDER}", object.username + "@" + object.time + ":" + object._id)}<img src="${object.src}" class="image-embed" alt="${object.caption}">${object.caption != "" ? "<br>" : ""}
+                            ${object.caption}${object.userid === uuid ? `</div></div></div>` : `</div></div><div class="col"></div></div>`}`;
+                        break;
+                    case "video":
+                        html += `<div class="message-container row gx-2">`
+                        if (object.userid === uuid) {
+                            html += `<div class="col"></div><div class="col">`
+                        }
+                        else {
+                            html += `<div class="col-auto"><img src="profile_pics/${object.username}?t=${object.time}" class="profile-picture" onerror="this.src='no-profile.jpg'"></div><div class="col-8">`
+                        }
+                        html += `<div class='message${mySelfParam}'><small class="msg-head"><div class="show-username-link" onclick="showProfile(\`${object.username}\`)">${object.username} ${object.badges}</div> @ ${Intl.DateTimeFormat(undefined, {dateStyle: 'short', timeStyle: 'short'}).format(object.time)}<br></small>
+                            ${msgPartForMod.replaceAll("{MESSAGE_ID_PLACEHOLDER}", object.username + "@" + object.time + ":" + object._id)}
+                            <video class="image-embed" controls>
+                              <source src="${object.src}">
+                              Your browser does not support the video tag.
+                            </video>${object.caption != "" ? "<br>" : ""}
+                            ${object.caption}${object.userid === uuid ? `</div></div></div>` : `</div></div><div class="col"></div></div>`}`;
+                        break;
+                    case "audio":
+                        html += `<div class="message-container row gx-2">`
+                        if (object.userid === uuid) {
+                            html += `<div class="col"></div><div class="col">`
+                        }
+                        else {
+                            html += `<div class="col-auto"><img src="profile_pics/${object.username}?t=${object.time}" class="profile-picture" onerror="this.src='no-profile.jpg'"></div><div class="col-8">`
+                        }
+                        html += `<div class='message${mySelfParam}'><small class="msg-head"><div class="show-username-link" onclick="showProfile(\`${object.username}\`)">${object.username} ${object.badges}</div> @ ${Intl.DateTimeFormat(undefined, {dateStyle: 'short', timeStyle: 'short'}).format(object.time)}<br><br></small>
+                            ${msgPartForMod.replaceAll("{MESSAGE_ID_PLACEHOLDER}", object.username + "@" + object.time + ":" + object._id)}
+                            <audio controls class="image-embed">
+                              <source src="${object.src}">
+                              Your browser does not support the audio element.
+                            </audio>${object.caption != "" ? "<br>" : ""}
+                            ${object.caption}${object.userid === uuid ? `</div></div></div>` : `</div></div><div class="col"></div></div>`}`;
+                        break;
+                    case "youtube":
+                        html += `<div class="message-container row gx-2">`
+                        if (object.userid === uuid) {
+                            html += `<div class="col"></div><div class="col">`
+                        }
+                        else {
+                            html += `<div class="col-auto"><img src="profile_pics/${object.username}?t=${object.time}" class="profile-picture" onerror="this.src='no-profile.jpg'"></div><div class="col-8">`
+                        }
+                        html += `<div class='message${mySelfParam}'><small class="msg-head"><div class="show-username-link" onclick="showProfile(\`${object.username}\`)">${object.username} ${object.badges}</div> @ ${Intl.DateTimeFormat(undefined, {dateStyle: 'short', timeStyle: 'short'}).format(object.time)}<br><br></small>
+                        ${msgPartForMod.replaceAll("{MESSAGE_ID_PLACEHOLDER}", object.username + "@" + object.time + ":" + object._id)}<div class="card youtube-video">
+                            <div class="card-header border-0 p-0">
+                                <img src="https://img.youtube.com/vi/${object.videoId}/maxresdefault.jpg" class="image-embed" alt="YouTube thumbnail">
+                            </div>
+                            <div class="card-block py-2">
+                                <h4 class="card-title">${object.title}</h4>
+                                <p class="card-text">${object.channel}</p>
+                                <a href="https://www.youtube.com/watch?v=${object.videoId}" target="_blank" class="btn btn-primary">WATCH</a>
+                            </div>
+                            <div class="w-100"></div>
+                            ${object.caption}
+                        </div>
+                            ${object.userid === uuid ? `</div></div></div>` : `</div></div><div class="col"></div></div>`}`;
+                        break;
+                    case "file":
+                        html += `<div class="message-container row gx-2">`
+                        if (object.userid === uuid) {
+                            html += `<div class="col"></div><div class="col">`
+                        }
+                        else {
+                            html += `<div class="col-auto"><img src="profile_pics/${object.username}?t=${object.time}" class="profile-picture" onerror="this.src='no-profile.jpg'"></div><div class="col-8">`
+                        }
+                        html += `<div class='message${mySelfParam}'><small class="msg-head"><div class="show-username-link" onclick="showProfile(\`${object.username}\`)">${object.username} ${object.badges}</div> @ ${Intl.DateTimeFormat(undefined, {dateStyle: 'short', timeStyle: 'short'}).format(object.time)}<br><br></small>
+                            ${msgPartForMod.replaceAll("{MESSAGE_ID_PLACEHOLDER}", object.username + "@" + object.time + ":" + object._id)}<a href="${object.src}" target="_blank" download class="btn fs-4 text-white"><i class="bi bi-file-earmark-arrow-down"></i> ` + object.name + `</a>
+                            ${object.userid === uuid ? `</div></div></div>` : `</div></div><div class="col"></div></div>`}`;
+                        break;
+                    default:
+                        html += `${msgPartForMod.replaceAll("{MESSAGE_ID_PLACEHOLDER}", object.username + "@" + object.time + ":" + object._id)}<xmp>${JSON.stringify(object)}</xmp>`;
+                        break;
+                }
+            });
+            return html;
+        }
+    </script>
+</body>
+</html>

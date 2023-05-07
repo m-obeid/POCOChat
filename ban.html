@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POCOChat</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+</head>
+<body class="bg-danger text-white">
+    <div class="row align-items-center w-100 vh-100">
+        <div class="w-100 text-center">
+            <i class="bi bi-sign-stop" style="font-size: 5em;"></i>
+            <h1 class="fw-bold text-uppercase">Oh no!</h1>
+            <p class="fs-5">You have been <b>BANNED</b>!</p>
+            <p>Reason: %REASON%<br>By: %MODERATOR%<br>Come back in: <span class="comebackTimer"></span></p>
+            <small>If you want to appeal your ban, please let us know on Discord.</small>
+        </div>
+    </div>
+    <script>
+        setTimeout(e, 1000);
+
+        function e() {
+            const formattedTime = timeSince(%ENDS%); // not a syntax error, vs code
+            document.querySelector(".comebackTimer").innerHTML = formattedTime;
+            setTimeout(e, 1000);
+        }
+
+        function timeSince(date) {       
+            var seconds = Math.abs(Math.floor((new Date() - date) / 1000));
+
+            var interval = seconds / 31536000;
+
+            if (Math.floor(seconds) === 0) {
+                window.location.reload()
+            }
+
+            if (interval > 1) {
+              return Math.floor(interval) + " years";
+            }
+            interval = seconds / 2592000;
+            if (interval > 1) {
+              return Math.floor(interval) + " months";
+            }
+            interval = seconds / 86400;
+            if (interval > 1) {
+              return Math.floor(interval) + " days";
+            }
+            interval = seconds / 3600;
+            if (interval > 1) {
+              return Math.floor(interval) + " hours";
+            }
+            interval = seconds / 60;
+            if (interval > 1) {
+              return Math.floor(interval) + " minutes";
+            }
+            return Math.floor(seconds) + " seconds";
+        }
+    </script>
+</body>
+</html>
