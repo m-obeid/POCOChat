@@ -501,7 +501,7 @@ app.post('/resetpassword', async (req,res) => {
               to: user.email,
               subject: "Password reset for POCOChat account",
               text:
-                "Open this URL to change password: https://chat.poco.ga/resetpassword?e=" +
+                "Open this URL to change password: https://chat.pocochat.com/resetpassword?e=" +
                 prt,
               html:
                 '<div style="margin: 20px;">' + `<svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-square-text" viewBox="0 0 16 16" version="1.1" id="svg6" sodipodi:docname="logo.svg" inkscape:version="1.2 (dc2aeda, 2022-05-15)">
@@ -515,9 +515,9 @@ app.post('/resetpassword', async (req,res) => {
                 <g aria-label="p" id="text395-3" style="font-size:12px;font-family:'Apple Color Emoji';-inkscape-font-specification:'Apple Color Emoji';text-align:center;text-anchor:middle;fill:#000000;stroke:none" transform="translate(0.01758906,-0.03119439)"/>
                 <rect style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.9182;stroke-opacity:1" id="rect2012-8" width="1.1116071" height="7.8039351" x="5.8896766" y="7.5663486" ry="0.10005045"/>
                 <path style="color:#000000;fill:#000000;stroke:none" d="m 9.5312605,4.0098212 c -2.0011278,0 -3.6367178,1.6355905 -3.6367178,3.6367188 0,2.0011282 1.63559,3.634765 3.6367178,3.634765 2.0011275,0 3.6347655,-1.6336368 3.6347655,-3.634765 0,-2.0011283 -1.633638,-3.6367188 -3.6347655,-3.6367188 z m 0,1.1230469 c 1.3942415,0 2.5117185,1.1194302 2.5117185,2.5136719 0,1.3942416 -1.117477,2.511719 -2.5117185,2.511719 -1.3942408,0 -2.5136718,-1.1174774 -2.5136718,-2.511719 0,-1.3942417 1.119431,-2.5136719 2.5136718,-2.5136719 z" id="path2016-0"/>
-              </svg>` + '<h1>Hey!</h1><p>Are you trying to reset your password for "' + user.username + '"?<br><br><br><br><a style="background-color: #ac00ff;padding:10px;color:white;font-size:15pt;border-radius:3px;text-decoration:none;" target="_blank" href="https://chat.poco.ga/newpassword?e=' +
+              </svg>` + '<h1>Hey!</h1><p>Are you trying to reset your password for "' + user.username + '"?<br><br><br><br><a style="background-color: #ac00ff;padding:10px;color:white;font-size:15pt;border-radius:3px;text-decoration:none;" target="_blank" href="https://chat.pocochat.com/newpassword?e=' +
                 prt +
-                '">Yes, change password</a><br><br> or copy this into your browser: https://chat.poco.ga/newpassword?e=' +
+                '">Yes, change password</a><br><br> or copy this into your browser: https://chat.pocochat.com/newpassword?e=' +
                 prt +
                 "</p><p>More details about requestor:<ul><li>IP: " + req.headers["x-forwarded-for"] + "</li><li>User-Agent: " + req.headers["user-agent"] + "</li></ul></p></div><hr><small>This is an automated message. Do NOT reply to this email. If you didn't create an account ignore the email</small>",
             };
@@ -1373,7 +1373,7 @@ async function User(data) {
           to: data.email,
           subject: "Verify your POCOChat account",
           text:
-            "Open this URL to verify: https://chat.poco.ga/verify?e=" +
+            "Open this URL to verify: https://chat.pocochat.com/verify?e=" +
             data.verifyCode,
           html:
             '<div style="margin: 20px;">' + `<svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-square-text" viewBox="0 0 16 16" version="1.1" id="svg6" sodipodi:docname="logo.svg" inkscape:version="1.2 (dc2aeda, 2022-05-15)">
@@ -1387,9 +1387,9 @@ async function User(data) {
             <g aria-label="p" id="text395-3" style="font-size:12px;font-family:'Apple Color Emoji';-inkscape-font-specification:'Apple Color Emoji';text-align:center;text-anchor:middle;fill:#000000;stroke:none" transform="translate(0.01758906,-0.03119439)"/>
             <rect style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.9182;stroke-opacity:1" id="rect2012-8" width="1.1116071" height="7.8039351" x="5.8896766" y="7.5663486" ry="0.10005045"/>
             <path style="color:#000000;fill:#000000;stroke:none" d="m 9.5312605,4.0098212 c -2.0011278,0 -3.6367178,1.6355905 -3.6367178,3.6367188 0,2.0011282 1.63559,3.634765 3.6367178,3.634765 2.0011275,0 3.6347655,-1.6336368 3.6347655,-3.634765 0,-2.0011283 -1.633638,-3.6367188 -3.6347655,-3.6367188 z m 0,1.1230469 c 1.3942415,0 2.5117185,1.1194302 2.5117185,2.5136719 0,1.3942416 -1.117477,2.511719 -2.5117185,2.511719 -1.3942408,0 -2.5136718,-1.1174774 -2.5136718,-2.511719 0,-1.3942417 1.119431,-2.5136719 2.5136718,-2.5136719 z" id="path2016-0"/>
-          </svg>` + '<h1>Hey!</h1><p>Are you trying to use POCOChat?<br><br><br><br><a style="background-color: #ac00ff;padding:10px;color:white;font-size:15pt;border-radius:3px;text-decoration:none;" target="_blank" href="https://chat.poco.ga/verify?e=' +
+          </svg>` + '<h1>Hey!</h1><p>Are you trying to use POCOChat?<br><br><br><br><a style="background-color: #ac00ff;padding:10px;color:white;font-size:15pt;border-radius:3px;text-decoration:none;" target="_blank" href="https://chat.pocochat.com/verify?e=' +
             data.verifyCode +
-            '">Verify account</a><br><br> or copy this into your browser: https://chat.poco.ga/verify?e=' +
+            '">Verify account</a><br><br> or copy this into your browser: https://chat.pocochat.com/verify?e=' +
             data.verifyCode +
             "</p></div><hr><small>This is an automated message. Do NOT reply to this email. If you didn't create an account ignore the email</small>",
         };
