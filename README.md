@@ -1,8 +1,8 @@
-# POCOChat
+# 💬 POCOChat
 
 POCOChat is a chatroom to find friends and discuss any topic as long as it meets the rules. Users can send text, pictures, videos, links, audio, documents and more.
 
-## Deployment
+## 👨‍💻 Deployment
 
 1. Install Node.js
    - If you don't have Node.js installed on your server, you can download it from https://nodejs.org/en/download/ and follow the installation instructions for your operating system.
@@ -50,7 +50,7 @@ https://github.com/m-obeid/POCOChat.git`
 
 That's it! POCOChat should now be up and running on your server. You can access it by navigating to your server's IP address or domain name on port 8910.
 
-## How to Add Commands
+## ⌨️ How to Add Commands
 
 To add commands to your chat, you need to add them in code first. Search for `!clear`, for example, which is a default command, and add your own statement. Then, in order to show it to users who type `!` in their keyboard, add it to `commands.json` too. It should be a JSON object like this one:
 
@@ -64,19 +64,19 @@ To add commands to your chat, you need to add them in code first. Search for `!c
 
 Once you're done, restart the server, and it should work.
 
-## How to Add Emojis
+## 😂 How to Add Emojis
 
 Simply insert an image file into the `emojis` folder. Your filename should be `youremojiname.yourextension`, for example, the emoji :blobcookie: -> `blobcookie.png` or `blobcookie.gif`, etc.
 
-## How to Add Badges
+## ✅ How to Add Badges
 
 Also, just add image files to `badges`. You can assign users badges using MongoDB. For that, go into `pocochat` database, `users` collection, find your user, and add an HTML `img` tag with a height of 20 and a `src` of eg. `badges/yourrbadge.png`. Any HTML code may be inserted, but you should avoid anything unusual as it could lead to exploitation.
 
-## How to Add Roles
+## 🛟 How to Add Roles
 
 Currently, there's only the moderation role, but feel free to code your own. You can add them to your user object in MongoDB in an array named `roles`. By default, a user has no roles. The moderation role can kick users' IP addresses, delete messages, or send notices to warn users.
 
-## More details
+## 🤔 More details
 
 POCOChat is now open-source and can be redistributed and rehosted as you wish, as long as:
 
