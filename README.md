@@ -2,6 +2,9 @@
 
 POCOChat is a chatroom to find friends and discuss any topic as long as it meets the rules. Users can send text, pictures, videos, links, audio, documents and more.
 
+> [!NOTE]
+> POCOChat is longer maintained since 2023. You can fork the project if you want to revive it yourself.
+
 ## 👨‍💻 Deployment
 
 1. Install Node.js
